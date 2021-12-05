@@ -7,6 +7,7 @@ metadata:
 EOF
 }
 
+# Install Argo CD in cluster
 data "http" "argocd_install_manifest_url" {
   url = var.argocd_install_manifest_url
 }
@@ -24,6 +25,26 @@ resource "kubectl_manifest" "argocd" {
   override_namespace = "argocd"
 }
 
+# Optionally create secret to store Github Personal Access Token for accessing repository containing Argo CD Application definitions
+resource "kubernetes_secret" "gh_pat" {
+
+  count = var.argocd_app_of_apps_repo_source.gh_personal_access_token == null ? 0 : 1
+  metadata {
+    name      = "argocd-repo-auth"
+    namespace = "argocd"
+    labels = {
+      "argocd.argoproj.io/secret-type" = "repository"
+    }
+  }
+
+  data = {
+    url      = var.argocd_app_of_apps_repo_source.repo_url
+    username = var.argocd_app_of_apps_repo_source.gh_username
+    password = var.argocd_app_of_apps_repo_source.gh_personal_access_token
+  }
+}
+
+# Deploy Argo CD applications using app of apps pattern
 data "template_file" "argocd_app_of_apps_manifest" {
   template = file("./templates/argocd_app_of_apps.tpl")
   vars = {

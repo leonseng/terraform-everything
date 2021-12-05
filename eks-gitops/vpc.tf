@@ -9,7 +9,7 @@ data "aws_availability_zones" "local_az" {
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
 
-  name = "vpc-${random_id.id.hex}"
+  name = "eks-gitops-${random_id.id.hex}"
   cidr = "10.0.0.0/16"
 
   azs             = slice(data.aws_availability_zones.local_az.names, 0, 3)
