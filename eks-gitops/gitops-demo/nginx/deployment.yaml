@@ -9,10 +9,8 @@ spec:
   selector:
     matchLabels:
       app: nginx
-  strategy: {}
   template:
     metadata:
-      creationTimestamp: null
       labels:
         app: nginx
     spec:
