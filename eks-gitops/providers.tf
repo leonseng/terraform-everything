@@ -30,3 +30,4 @@ provider "kubernetes" {
   token                  = data.aws_eks_cluster_auth.eks.token
 }
 
+provider "template" {}

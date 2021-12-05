@@ -29,3 +29,14 @@ variable "argocd_install_manifest_url" {
   type    = string
   default = "https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml"
 }
+
+variable "argocd_app_of_apps_repo_source" {
+  type = object({
+    repo_url = string
+    path     = string
+  })
+  default = {
+    repo_url = "https://github.com/leonseng/terraform-everything.git"
+    path     = "eks-gitops/gitops-demo/app-list"
+  }
+}
