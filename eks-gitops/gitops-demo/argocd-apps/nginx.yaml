@@ -11,7 +11,7 @@ spec:
     path: eks-gitops/gitops-demo/nginx
   destination:
     server: https://kubernetes.default.svc
-    namespace: nginx
+    namespace: gitops-nginx
   syncPolicy:
     automated:
       prune: true

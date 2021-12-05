@@ -11,7 +11,7 @@ spec:
     path: eks-gitops/gitops-demo/httpbin
   destination:
     server: https://kubernetes.default.svc
-    namespace: httpbin
+    namespace: gitops-httpbin
   syncPolicy:
     automated:
       prune: true
