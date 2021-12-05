@@ -23,3 +23,9 @@ variable "eks_worker_group" {
     instance_type        = "m4.large"
   }]
 }
+
+# Argo CD
+variable "argocd_install_manifest_url" {
+  type    = string
+  default = "https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml"
+}
