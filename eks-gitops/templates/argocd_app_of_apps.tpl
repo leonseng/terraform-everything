@@ -18,6 +18,6 @@ spec:
     automated:
       prune: true
       selfHeal: true
-      allowEmpty: false
+      allowEmpty: true
     syncOptions:
     - Validate=false
