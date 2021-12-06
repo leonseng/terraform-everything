@@ -20,8 +20,10 @@ provider "aws" {
 provider "http" {}
 
 provider "kubectl" {
-  load_config_file = true
-  config_path      = module.eks.kubeconfig_filename
+  load_config_file       = "false"
+  host                   = data.aws_eks_cluster.eks.endpoint
+  cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks.certificate_authority[0].data)
+  token                  = data.aws_eks_cluster_auth.eks.token
 }
 
 provider "kubernetes" {
@@ -31,3 +33,5 @@ provider "kubernetes" {
 }
 
 provider "template" {}
+
+provider "time" {}
