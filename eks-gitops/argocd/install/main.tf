@@ -21,6 +21,7 @@ data "kubectl_file_documents" "argocd" {
   content = data.http.argocd_install_manifest_url.body
 }
 
+# Install Argo CD
 resource "kubectl_manifest" "argocd" {
   depends_on         = [kubernetes_namespace.argocd]
   wait               = true
@@ -29,24 +30,8 @@ resource "kubectl_manifest" "argocd" {
   override_namespace = "argocd"
 }
 
-# resource "null_resource" "install_argocd" {
-#   depends_on = [kubernetes_namespace.argocd]
-#   triggers = {
-#     invokes_me_everytime = uuid()
-#     install_manifest_url = var.argocd_install_manifest_url
-#     kubectl              = "kubectl --kubeconfig ${var.kubeconfig_file} -n argocd"
-#   }
-
-#   provisioner "local-exec" {
-#     command = "${self.triggers.kubectl} -n argocd apply -f ${self.triggers.install_manifest_url}"
-#   }
-
-#   provisioner "local-exec" {
-#     when    = destroy
-#     command = "until [ $(${self.triggers.kubectl} get applications --no-headers 2>/dev/null | wc -l) -eq 0 ]; do sleep 3; done && ${self.triggers.kubectl} delete -f ${self.triggers.install_manifest_url}"
-#   }
-# }
-
+# This ensures all Argo CD Application CRs are deleted before Argo CD installation is removed (along with the Application CRD).
+# Without this, the Application CRs will be in a stuck state as Kubernetes can no longer query the CRs without the CRD.
 resource "null_resource" "argocd_app_cleanup" {
   depends_on = [kubectl_manifest.argocd]
   triggers = {
@@ -60,11 +45,12 @@ resource "null_resource" "argocd_app_cleanup" {
   }
 }
 
-resource "kubernetes_secret" "gh_pat" {
+# Optionally create a Secret for Argo CD to pull from private Git repositories
+resource "kubernetes_secret" "private_repo_auth" {
   depends_on = [null_resource.argocd_app_cleanup]
   count      = var.bootstrap_app_source_repo.password == null ? 0 : 1
   metadata {
-    name      = "argocd-repo-auth"
+    name      = "private-repo-auth"
     namespace = "argocd"
     labels = {
       "argocd.argoproj.io/secret-type" = "repository"
@@ -80,7 +66,7 @@ resource "kubernetes_secret" "gh_pat" {
 
 # need to use kubectl_manifest here because kubernetes_manifest does not support defining CRD and CR in the same TF state
 # https://github.com/hashicorp/terraform-provider-kubernetes/issues/1367
-resource "kubectl_manifest" "argocd_app_of_apps" {
+resource "kubectl_manifest" "bootstrap_app" {
   depends_on = [null_resource.argocd_app_cleanup]
   wait       = true
   yaml_body = templatefile(
