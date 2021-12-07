@@ -18,7 +18,7 @@ variable "argocd_app_of_apps_repo_source" {
   })
   default = {
     repo_url                 = "https://github.com/leonseng/terraform-everything.git"
-    path                     = "eks-gitops/argocd-bootstrap/demo/argocd-apps"
+    path                     = "eks-gitops/argocd-demo/argocd-apps"
     gh_username              = "nobody"
     gh_personal_access_token = null
   }

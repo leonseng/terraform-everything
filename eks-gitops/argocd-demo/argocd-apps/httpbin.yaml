@@ -1,17 +1,17 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: nginx
+  name: httpbin
   namespace: argocd
 spec:
   project: default
   source:
     repoURL: https://github.com/leonseng/terraform-everything.git
     targetRevision: HEAD
-    path: eks-gitops/gitops-demo/nginx
+    path: eks-gitops/argocd-demo/httpbin
   destination:
     server: https://kubernetes.default.svc
-    namespace: gitops-nginx
+    namespace: gitops-httpbin
   syncPolicy:
     automated:
       prune: true
