@@ -2,44 +2,51 @@
 
 IaC x GitOps demo using Terraform and Argo CD.
 
-Reference: https://github.com/hashicorp/terraform-provider-kubernetes/blob/main/_examples/eks/README.md
+The setup is split into 2 parts:
+
+1. [Kubernetes cluster](./eks)
+
+    Deploys an EKS cluster on AWS
+
+1. [Argo CD](./argocd/install)
+
+    Installs Argo CD in the `argocd` namespace on the Kubernetes cluster and deploys an Argo CD Application resource which deploys all other applications in the cluster.
+
+    Split from previous step as Terraform Kubernetes provider configuration must be known (after EKS has been created) before the provider can apply configurations. See [Terraform documentation](https://github.com/hashicorp/terraform-provider-kubernetes/tree/main/_examples/eks) for more information.
+
+## Deploy
 
 ```
-cd eks
+root_dir=$(pwd)
+
+# Deploy EKS cluster
+cd $root_dir/eks
 terraform init
-terraom apply -auto-approve
-export CLUSTER_ID=$(terraform output -raw cluster_id)
+terraform apply -auto-approve
 export KUBECONFIG=$(pwd)/$(terraform output -raw kubeconfig_file)
 
-cd ../argocd-bootstrap
+# Install Argo CD and deploy bootstrap application
+cd $root_dir/argocd/install
 terraform init
-terraform apply -var=cluster_id=$CLUSTER_ID -auto-approve
-
-cd ..
+terraform apply -var=kubeconfig_file=$KUBECONFIG -auto-approve
 ```
 
-Verify
+## Verify
 ```
 # using kubeconfig file specified in KUBECONFIG environment variable
 kubectl -n argocd get applications
 ```
 
-Clean up
+## Clean up
 ```
-cd argocd-bootstrap
-terraform init
+# Uninstall Argo CD
+cd $root_dir/argocd/install
+terraform destroy -var=kubeconfig_file=$KUBECONFIG -auto-approve
+
+# Destroy EKS cluster
+cd $root_dir/eks
 terraform destroy -auto-approve
-
-cd ../eks
-terraform init
-terraom destroy -auto-approve
-
-cd ..
 ```
-
-## Notes
-
-- AWS load balancers created by Kubernetes LoadBalanacer Services need to be manually deleted for `terraform delete` to work.
 
 ## Todo
 
