@@ -23,7 +23,7 @@ root_dir=$(pwd)
 cd $root_dir/eks
 terraform init
 terraform apply -auto-approve
-export KUBECONFIG=$(pwd)/$(terraform output -raw kubeconfig_file)
+export KUBECONFIG=$(terraform output -raw kubeconfig_file)
 
 # Install Argo CD and deploy bootstrap application
 cd $root_dir/argocd/install
