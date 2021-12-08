@@ -1,13 +1,15 @@
-provider "kubernetes" {
-  config_path = var.kubeconfig_file
-}
-
 provider "kubectl" {
-  load_config_file = true
-  config_path      = var.kubeconfig_file
+  load_config_file       = false
+  host                   = data.aws_eks_cluster.eks.endpoint
+  cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks.certificate_authority[0].data)
+  token                  = data.aws_eks_cluster_auth.eks.token
 }
 
 resource "kubernetes_namespace" "argocd" {
+  depends_on = [
+    module.eks,
+    module.vpc
+  ]
   metadata {
     name = "argocd"
   }
@@ -36,7 +38,7 @@ resource "null_resource" "argocd_app_cleanup" {
   depends_on = [kubectl_manifest.argocd]
   triggers = {
     invokes_me_everytime = uuid()
-    kubeconfig_file      = var.kubeconfig_file
+    kubeconfig_file      = abspath("${path.root}/${module.eks.kubeconfig_filename}")
   }
 
   provisioner "local-exec" {
