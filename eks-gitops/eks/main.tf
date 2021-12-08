@@ -7,12 +7,13 @@ resource "random_id" "id" {
   byte_length = 8
 }
 
+data "aws_region" "current" {}
 
 data "aws_availability_zones" "local_az" {
   state = "available"
   filter {
     name   = "region-name"
-    values = ["${var.region}"]
+    values = ["${data.aws_region.current.name}"]
   }
 }
 
