@@ -1,10 +1,12 @@
 variable "kubeconfig_file" {
-  type = string
+  description = "Path to kubeconfig file for authenticating with cluster."
+  type        = string
 }
 
 variable "argocd_install_manifest_url" {
-  type    = string
-  default = "https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml"
+  description = "URL to Argo CD manifests YAML file. See https://argo-cd.readthedocs.io/en/stable/getting_started/#1-install-argo-cd"
+  type        = string
+  default     = "https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml"
 }
 
 variable "bootstrap_app_source_repo" {
