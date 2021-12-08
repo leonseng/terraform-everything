@@ -4,31 +4,14 @@ IaC x GitOps demo using Terraform and Argo CD.
 
 The setup is split into 2 parts:
 
-1. [Kubernetes cluster](./eks)
-
-    Deploys an EKS cluster on AWS
-
-1. [Argo CD](./argocd/install)
-
-    Installs Argo CD in the `argocd` namespace on the Kubernetes cluster and deploys an Argo CD Application resource which deploys all other applications in the cluster.
-
-    Split from previous step as Terraform Kubernetes provider configuration must be known (after EKS has been created) before the provider can apply configurations. See [Terraform documentation](https://github.com/hashicorp/terraform-provider-kubernetes/tree/main/_examples/eks) for more information.
+1. [Deploy an EKS cluster on AWS](./eks.tf)
+1. [Install Argo CD on EKS cluster and create bootstrap Application to deploy applications using app of apps pattern ](./argocd.tf)
 
 ## Deploy
-
 ```
-root_dir=$(pwd)
-
-# Deploy EKS cluster
-cd $root_dir/eks
 terraform init
 terraform apply -auto-approve
 export KUBECONFIG=$(terraform output -raw kubeconfig_file)
-
-# Install Argo CD and deploy bootstrap application
-cd $root_dir/argocd/install
-terraform init
-terraform apply -var=kubeconfig_file=$KUBECONFIG -auto-approve
 ```
 
 ## Verify
@@ -39,12 +22,6 @@ kubectl -n argocd get applications
 
 ## Clean up
 ```
-# Uninstall Argo CD
-cd $root_dir/argocd/install
-terraform destroy -var=kubeconfig_file=$KUBECONFIG -auto-approve
-
-# Destroy EKS cluster
-cd $root_dir/eks
 terraform destroy -auto-approve
 ```
 
