@@ -1,3 +1,3 @@
 output "kubeconfig_file" {
-  value = module.eks.kubeconfig_filename
+  value = abspath("${path.root}/${module.eks.kubeconfig_filename}")
 }
