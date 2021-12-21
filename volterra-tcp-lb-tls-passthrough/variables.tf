@@ -25,7 +25,7 @@ variable "origin_server_port" {
 }
 
 variable "lb_domain" {
-  description = "Domain for load balancer"
+  description = "Domain for load balancer. E.g.: foo.bar.com"
   type        = string
 }
 
