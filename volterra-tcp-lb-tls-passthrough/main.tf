@@ -31,12 +31,8 @@ resource "volterra_origin_pool" "origin_pool" {
   namespace              = var.namespace
   endpoint_selection     = "LOCAL_PREFERRED"
   loadbalancer_algorithm = "LB_OVERRIDE"
-
-  healthcheck {
-    name      = local.resource_name
-    namespace = var.namespace
-    tenant    = data.volterra_namespace.namespace.tenant_name
-  }
+  port                   = var.origin_server_port
+  no_tls                 = true
 
   dynamic "origin_servers" {
     for_each = var.origin_server_public_ips
@@ -47,8 +43,11 @@ resource "volterra_origin_pool" "origin_pool" {
     }
   }
 
-  port   = var.origin_server_port
-  no_tls = true
+  healthcheck {
+    name      = volterra_healthcheck.healthcheck.name
+    namespace = volterra_healthcheck.healthcheck.namespace
+    tenant    = data.volterra_namespace.namespace.tenant_name
+  }
 }
 
 resource "volterra_tcp_loadbalancer" "tcp_lb" {
@@ -61,10 +60,11 @@ resource "volterra_tcp_loadbalancer" "tcp_lb" {
   retract_cluster                 = true
   hash_policy_choice_round_robin  = true
   idle_timeout                    = var.lb_idle_timeout
+
   origin_pools_weights {
     pool {
-      name      = local.resource_name
-      namespace = var.namespace
+      name      = volterra_origin_pool.origin_pool.name
+      namespace = volterra_origin_pool.origin_pool.namespace
       tenant    = data.volterra_namespace.namespace.tenant_name
     }
   }
