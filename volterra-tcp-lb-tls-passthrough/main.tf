@@ -8,7 +8,7 @@ resource "random_id" "id" {
 }
 
 locals {
-  resource_name = "tcp-proxy-${random_id.id.hex}"
+  resource_name = "tls-passthrough-${random_id.id.hex}"
 }
 
 data "volterra_namespace" "namespace" {
