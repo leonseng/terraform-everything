@@ -1,65 +1,55 @@
 provider "aws" {
-  region = var.region
+  alias  = "use1"
+  region = "us-east-1"
 }
 
-resource "random_id" "id" {
-  byte_length = 8
-}
-
-data "aws_region" "current" {}
-
-data "aws_availability_zones" "local_az" {
-  state = "available"
-  filter {
-    name   = "region-name"
-    values = ["${data.aws_region.current.name}"]
+module "http-load-test-use1" {
+  source = "./modules/http-load-test"
+  providers = {
+    aws = aws.use1
   }
+
+  target = var.target
 }
 
-module "vpc" {
-  source = "terraform-aws-modules/vpc/aws"
+provider "aws" {
+  alias  = "apne2"
+  region = "ap-northeast-2"
+}
 
-  name = "ab-dos-${random_id.id.hex}"
-  cidr = "10.0.0.0/16"
-
-  azs            = slice(data.aws_availability_zones.local_az.names, 0, 3)
-  public_subnets = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
-
-  tags = {
-    id = random_id.id.hex
+module "http-load-test-apne2" {
+  source = "./modules/http-load-test"
+  providers = {
+    aws = aws.apne2
   }
+
+  target = var.target
 }
 
-resource "aws_ecs_cluster" "ab_dos" {
-  name = "ab-dos-cluster-${random_id.id.hex}"
+provider "aws" {
+  alias  = "apse2"
+  region = "ap-southeast-2"
 }
 
-resource "aws_ecs_task_definition" "ab_dos" {
-  family                   = "ab-dos-${random_id.id.hex}"
-  requires_compatibilities = ["FARGATE"]
-  network_mode             = "awsvpc"
-  cpu                      = 256
-  memory                   = 512
-  container_definitions = jsonencode([
-    {
-      name  = "apache-benchmark"
-      image = "quay.io/l_seng/ab-dos"
-
-      command = [
-        var.target
-      ]
-    }
-  ])
-}
-
-resource "aws_ecs_service" "ab_dos" {
-  name            = "ab-dos-${random_id.id.hex}"
-  cluster         = aws_ecs_cluster.ab_dos.id
-  task_definition = aws_ecs_task_definition.ab_dos.arn
-  desired_count   = 10
-  launch_type     = "FARGATE"
-  network_configuration {
-    subnets          = module.vpc.public_subnets
-    assign_public_ip = true
+module "http-load-test-apse2" {
+  source = "./modules/http-load-test"
+  providers = {
+    aws = aws.apse2
   }
+
+  target = var.target
+}
+
+provider "aws" {
+  alias  = "euc1"
+  region = "eu-central-1"
+}
+
+module "http-load-test-euc1" {
+  source = "./modules/http-load-test"
+  providers = {
+    aws = aws.euc1
+  }
+
+  target = var.target
 }
