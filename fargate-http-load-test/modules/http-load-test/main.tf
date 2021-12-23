@@ -39,7 +39,7 @@ resource "aws_ecs_task_definition" "ab_dos" {
   container_definitions = jsonencode([
     {
       name  = "apache-benchmark"
-      image = "quay.io/l_seng/ab-dos"
+      image = var.load_test_image
 
       command = [
         var.target
