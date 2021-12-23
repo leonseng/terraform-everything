@@ -5,8 +5,8 @@ Creates AWS Fargate containers that run load test (by default Apache Benchmark) 
 ## Setup
 
 1. Using [all_regions.txt](./all_regions.txt) as reference, create a file `_regions.txt` file containing a list of AWS regions to run the load test from.
-1. Run `./generate-tf.sh` to create a `_load.tf` file which will contain the Terraform AWS providers and load test modules for all specified region.
-1. Run Terraform commands to create the Fargate containers. See [variables.tf](./variables.tf) for a list of input variables.
+1. Run `./generate-tf.sh` to create a `_load.tf` file which will contain the Terraform AWS providers and load test modules for all specified regions.
+1. Run the following Terraform commands to declare the Fargate containers. See [variables.tf](./variables.tf) for a list of input variables.
     ```
     terraform init
     terraform apply -auto-approve <optional variables>
