@@ -46,3 +46,10 @@ variable "bootstrap_app_source_repo" {
     password = null
   }
 }
+
+# kubeconfig AWS authenticator settings for SSO use case
+variable "kubeconfig_aws_auth_env_variables" {
+  description = "Environment variables that should be used when executing the authenticator"
+  type        = map(string)
+  default     = null
+}

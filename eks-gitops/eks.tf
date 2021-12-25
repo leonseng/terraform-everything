@@ -6,6 +6,10 @@ resource "random_id" "id" {
   byte_length = 8
 }
 
+locals {
+  cluster_name = "eks-${random_id.id.hex}"
+}
+
 data "aws_region" "current" {}
 
 data "aws_availability_zones" "local_az" {
@@ -36,12 +40,14 @@ module "vpc" {
 module "eks" {
   source = "terraform-aws-modules/eks/aws"
 
-  cluster_version = var.k8s_version
-  cluster_name    = "eks-${random_id.id.hex}"
-  vpc_id          = module.vpc.vpc_id
-  subnets         = module.vpc.private_subnets
-
-  worker_groups = var.eks_worker_group
+  cluster_version                            = var.k8s_version
+  cluster_name                               = local.cluster_name
+  vpc_id                                     = module.vpc.vpc_id
+  subnets                                    = module.vpc.private_subnets
+  kubeconfig_aws_authenticator_command       = "aws"
+  kubeconfig_aws_authenticator_command_args  = ["eks", "get-token", "--cluster-name", local.cluster_name]
+  kubeconfig_aws_authenticator_env_variables = var.kubeconfig_aws_auth_env_variables
+  worker_groups                              = var.eks_worker_group
 }
 
 data "aws_eks_cluster" "eks" {
