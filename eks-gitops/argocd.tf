@@ -37,13 +37,15 @@ resource "kubectl_manifest" "argocd" {
 resource "null_resource" "argocd_app_cleanup" {
   depends_on = [kubectl_manifest.argocd]
   triggers = {
-    invokes_me_everytime = uuid()
-    kubeconfig_file      = abspath("${path.root}/${module.eks.kubeconfig_filename}")
+    kubeconfig_file = abspath("${path.root}/${module.eks.kubeconfig_filename}")
   }
 
   provisioner "local-exec" {
     when    = destroy
-    command = "until [ $(kubectl --kubeconfig ${self.triggers.kubeconfig_file} -n argocd get applications --no-headers 2>/dev/null | wc -l) -eq 0 ]; do sleep 3; done"
+    command = "until [ $(kubectl -n argocd get applications --no-headers 2>/dev/null | wc -l) -eq 0 ]; do sleep 3; done"
+    environment = {
+      KUBECONFIG = self.triggers.kubeconfig_file
+    }
   }
 }
 
