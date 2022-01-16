@@ -8,8 +8,8 @@ variable "api_p12_file" {
   type        = string
 }
 
-variable "resource_prefix" {
-  description = "String prefixed to all Volterra resource names"
+variable "name" {
+  description = "Module instance name"
   type        = string
   default     = "aws_vpc_site"
 }
@@ -50,12 +50,12 @@ variable "labels" {
 
 variable "tf_apply_timeout_minutes" {
   description = "Time to wait (in minutes) for terraform to successfully create AWS VPC site"
-  type = number
-  default = 20
+  type        = number
+  default     = 20
 }
 
 variable "tf_destroy_timeout_minutes" {
   description = "Time to wait (in minutes) for terraform to successfully destroy AWS VPC site"
-  type = number
-  default = 20
+  type        = number
+  default     = 20
 }

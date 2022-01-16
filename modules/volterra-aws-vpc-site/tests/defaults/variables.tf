@@ -11,7 +11,7 @@ variable "api_p12_file" {
 variable "resource_prefix" {
   description = "String prefixed to all Volterra resource names"
   type        = string
-  default     = "aws-vpc-site"
+  default     = "aws-vpc-site-test"
 }
 
 variable "namespace" {

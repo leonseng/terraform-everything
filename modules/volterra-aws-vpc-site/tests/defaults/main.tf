@@ -30,11 +30,11 @@ resource "volterra_cloud_credentials" "aws_cc" {
   }
 }
 
-module "edge_site_1" {
+module "test_site" {
   source                     = "../../"
+  name                       = "${random_id.id.dec}-test"
   api_endpoint               = var.api_endpoint
   api_p12_file               = var.api_p12_file
-  resource_prefix            = "${random_id.id.dec}-edge-1"
   tenant_name                = local.tenant_name
   aws_cloud_credentials_name = "${random_id.id.dec}-cc"
   region                     = var.region

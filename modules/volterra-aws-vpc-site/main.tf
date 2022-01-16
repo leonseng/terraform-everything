@@ -1,5 +1,5 @@
 resource "volterra_aws_vpc_site" "aws_vpc_site" {
-  name       = "${var.resource_prefix}-aws"
+  name       = var.name
   namespace  = "system"
   aws_region = var.region
 
@@ -14,7 +14,7 @@ resource "volterra_aws_vpc_site" "aws_vpc_site" {
 
   vpc {
     new_vpc {
-      name_tag      = "${var.resource_prefix}-vpc"
+      name_tag      = "${var.name}-vpc"
       primary_ipv4  = "10.0.0.0/16"
       allocate_ipv6 = false
     }
@@ -43,7 +43,7 @@ resource "null_resource" "terraform_action" {
   triggers = {
     api_p12_file      = var.api_p12_file
     api_endpoint      = var.api_endpoint
-    aws_vpc_site_name = "${var.resource_prefix}-aws"
+    aws_vpc_site_name = var.name
     timeout           = var.tf_apply_timeout_minutes
   }
 
