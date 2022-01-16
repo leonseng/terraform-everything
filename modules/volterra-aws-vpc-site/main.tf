@@ -15,7 +15,7 @@ resource "volterra_aws_vpc_site" "aws_vpc_site" {
 
   vpc {
     new_vpc {
-      name_tag      = "${var.name}-vpc"
+      name_tag      = var.name
       primary_ipv4  = "10.0.0.0/16"
       allocate_ipv6 = false
     }
