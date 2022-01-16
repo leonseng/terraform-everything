@@ -2,6 +2,7 @@ resource "volterra_aws_vpc_site" "aws_vpc_site" {
   name       = var.name
   namespace  = "system"
   aws_region = var.region
+  labels     = var.labels
 
   aws_cred {
     name      = var.aws_cloud_credentials_name
