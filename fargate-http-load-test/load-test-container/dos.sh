@@ -1,5 +1,9 @@
 #!/usr/bin/env sh
 
 DEFAULT_TARGET="http://localhost:8080/"
+DEFAULT_CONCURRENCY="100"
+
 TARGET="${1:-$DEFAULT_TARGET}"
-while true; do /usr/bin/ab -n 1000000 -c 1000 $TARGET; done
+CONCURRENCY="${1:-$DEFAULT_CONCURRENCY}"
+
+while true; do /usr/bin/ab -n 1000000 -c $CONCURRENCY $TARGET; done

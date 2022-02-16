@@ -12,8 +12,10 @@ module \"http-load-test-aws_region\" {
     aws = aws.aws_region
   }
 
-  target = var.target
   load_test_image = var.load_test_image
+  load_test_container_count = var.load_test_container_count_per_region
+  target = var.target
+  concurrency_per_container = var.concurrency_per_container
 }
 "
 

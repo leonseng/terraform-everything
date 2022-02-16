@@ -42,7 +42,8 @@ resource "aws_ecs_task_definition" "ab_dos" {
       image = var.load_test_image
 
       command = [
-        var.target
+        var.target,
+        tostring(var.concurrency_per_container)
       ]
     }
   ])
@@ -52,7 +53,7 @@ resource "aws_ecs_service" "ab_dos" {
   name            = "ab-dos-${random_id.id.hex}"
   cluster         = aws_ecs_cluster.ab_dos.id
   task_definition = aws_ecs_task_definition.ab_dos.arn
-  desired_count   = 10
+  desired_count   = var.load_test_container_count
   launch_type     = "FARGATE"
   network_configuration {
     subnets          = module.vpc.public_subnets
