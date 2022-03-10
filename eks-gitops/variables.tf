@@ -31,6 +31,18 @@ variable "argocd_install_manifest_url" {
   default     = "https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml"
 }
 
+variable "sealed_secrets_install_manifest_url" {
+  description = "URL to Sealed Secrets manifests YAML file."
+  type        = string
+  default     = "https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.17.3/controller.yaml"
+}
+
+variable "sealed_secret_key_manifest_b64" {
+  description = "Base64 encoded manifest file containing backup of Sealed Secrets encryption keys. See https://github.com/bitnami-labs/sealed-secrets#how-can-i-do-a-backup-of-my-sealedsecrets."
+  type        = string
+  default     = null
+}
+
 variable "bootstrap_app_source_repo" {
   description = "Repository containing Argo CD Application resources to be deployed in the cluster. GitHub private repositories can be accessed via Personal Access Tokens."
   type = object({
