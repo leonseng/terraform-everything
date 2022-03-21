@@ -81,3 +81,44 @@ resource "kubectl_manifest" "bootstrap_app" {
     }
   )
 }
+
+# Expose argo CD web UI
+resource "kubernetes_service" "argocd_server_lb" {
+  depends_on = [kubernetes_namespace.argocd]
+
+  metadata {
+    name      = "argocd-server-lb"
+    namespace = "argocd"
+  }
+  spec {
+    selector = {
+      "app.kubernetes.io/name" = "argocd-server"
+    }
+    port {
+      name        = "https"
+      port        = 443
+      target_port = 8080
+    }
+
+    type = "LoadBalancer"
+  }
+}
+
+# Get Argo CD web UI IP/URL
+data "kubernetes_service" "argocd_server_lb" {
+  depends_on = [kubernetes_service.argocd_server_lb]
+
+  metadata {
+    name      = "argocd-server-lb"
+    namespace = "argocd"
+  }
+}
+
+# Get web UI password
+data "kubernetes_secret" "argocd_server_password" {
+  depends_on = [null_resource.argocd_app_cleanup]
+  metadata {
+    name      = "argocd-initial-admin-secret"
+    namespace = "argocd"
+  }
+}
