@@ -82,6 +82,7 @@ resource "kubectl_manifest" "bootstrap_app" {
     {
       argocd_namespace = var.argocd_namespace
       url              = var.bootstrap_app_source_repo.url
+      revision         = var.bootstrap_app_source_repo.revision
       path             = var.bootstrap_app_source_repo.path
     }
   )

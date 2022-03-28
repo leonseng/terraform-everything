@@ -31,12 +31,14 @@ variable "bootstrap_app_source_repo" {
   description = "Repository containing Argo CD Application resources to be deployed in the cluster. GitHub private repositories can be accessed via Personal Access Tokens."
   type = object({
     url      = string
+    revision = string
     path     = string
     username = string
     password = string
   })
   default = {
     url      = "https://github.com/leonseng/terraform-kubernetes-argocd-bootstrap.git"
+    revision = "HEAD"
     path     = "test/demo/argocd-apps"
     username = "nobody"
     password = null
