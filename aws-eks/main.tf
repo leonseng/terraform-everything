@@ -48,7 +48,11 @@ data "aws_eks_cluster_auth" "eks" {
 }
 
 locals {
-  kubeconfig = templatefile(
+  kubeconfig_file = abspath("${path.module}/.kube/${random_id.id.dec}.config")
+}
+
+resource "local_file" "kubeconfig" {
+  content = templatefile(
     abspath("${path.module}/kube.config.tpl"),
     {
       cluster_id       = module.eks.cluster_id
@@ -57,4 +61,5 @@ locals {
       token            = data.aws_eks_cluster_auth.eks.token
     }
   )
+  filename = local.kubeconfig_file
 }

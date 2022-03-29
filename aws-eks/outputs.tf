@@ -1,4 +1,3 @@
-output "kubeconfig_b64" {
-  value     = base64encode(local.kubeconfig)
-  sensitive = true
+output "kubeconfig_file" {
+  value = local.kubeconfig_file
 }
