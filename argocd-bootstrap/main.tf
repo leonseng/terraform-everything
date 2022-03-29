@@ -4,13 +4,13 @@ resource "random_id" "id" {
 }
 
 locals {
-  kubeconfig      = yamldecode(var.kubeconfig_b64)
+  kubeconfig      = base64decode(var.kubeconfig_b64)
   kubeconfig_file = "${abspath(path.module)}/.kube/${random_id.id.dec}.config"
 }
 
 
 resource "local_file" "kubeconfig" {
-  content  = base64decode(var.kubeconfig_b64)
+  content  = var.kubeconfig_b64
   filename = local.kubeconfig_file
 }
 
