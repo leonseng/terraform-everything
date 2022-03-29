@@ -48,29 +48,13 @@ data "aws_eks_cluster_auth" "eks" {
 }
 
 locals {
-  kubeconfig = yamlencode({
-    apiVersion      = "v1"
-    kind            = "Config"
-    current-context = "default"
-    clusters = [{
-      name = module.eks.cluster_id
-      cluster = {
-        certificate-authority-data = module.eks.cluster_certificate_authority_data
-        server                     = module.eks.cluster_endpoint
-      }
-    }]
-    contexts = [{
-      name = "default"
-      context = {
-        cluster = module.eks.cluster_id
-        user    = "terraform"
-      }
-    }]
-    users = [{
-      name = "terraform"
-      user = {
-        token = data.aws_eks_cluster_auth.eks.token
-      }
-    }]
-  })
+  kubeconfig = templatefile(
+    abspath("${path.module}/kube.config.tpl"),
+    {
+      cluster_id       = module.eks.cluster_id
+      cluster_ca_data  = module.eks.cluster_certificate_authority_data
+      cluster_endpoint = module.eks.cluster_endpoint
+      token            = data.aws_eks_cluster_auth.eks.token
+    }
+  )
 }
