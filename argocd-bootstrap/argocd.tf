@@ -29,7 +29,7 @@ resource "kubectl_manifest" "argocd" {
 resource "null_resource" "argocd_app_cleanup" {
   depends_on = [kubectl_manifest.argocd]
   triggers = {
-    kubeconfig_file  = local.kubeconfig_file
+    kubeconfig_file  = var.kubeconfig_file
     argocd_namespace = var.argocd_namespace
   }
 

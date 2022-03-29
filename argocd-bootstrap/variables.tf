@@ -1,5 +1,5 @@
-variable "kubeconfig_b64" {
-  description = "Base64 encoded string of the kubeconfig file contents to access the Kubernetes cluster"
+variable "kubeconfig_file" {
+  description = "Path to kubeconfig file for accessing the Kubernetes cluster"
   type        = string
 }
 

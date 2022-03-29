@@ -3,4 +3,3 @@
 .terraform
 .terraform.lock.hcl
 *.tfvars
-.kube/
