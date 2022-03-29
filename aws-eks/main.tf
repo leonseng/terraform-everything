@@ -51,7 +51,7 @@ locals {
   kubeconfig = yamlencode({
     apiVersion      = "v1"
     kind            = "Config"
-    current-context = "terraform"
+    current-context = "default"
     clusters = [{
       name = module.eks.cluster_id
       cluster = {
@@ -60,7 +60,7 @@ locals {
       }
     }]
     contexts = [{
-      name = "terraform"
+      name = "default"
       context = {
         cluster = module.eks.cluster_id
         user    = "terraform"
