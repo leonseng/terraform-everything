@@ -13,14 +13,16 @@ variable "k8s_version" {
 
 variable "eks_managed_node_group_configuration" {
   description = "Cluster worker group configurations."
-  type = list(object({
-    instance_type = string
-    desired_size  = number
-    max_size      = number
-  }))
-  default = [{
-    desired_size  = 3
-    max_size      = 5
-    instance_type = "m4.large"
-  }]
+  type = object({
+    min_size       = number
+    desired_size   = number
+    max_size       = number
+    instance_types = list(string)
+  })
+  default = {
+    min_size       = 3
+    desired_size   = 3
+    max_size       = 5
+    instance_types = ["m4.large"]
+  }
 }
