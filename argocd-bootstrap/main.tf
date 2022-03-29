@@ -5,7 +5,7 @@ resource "random_id" "id" {
 
 locals {
   kubeconfig      = yamldecode(var.kubeconfig_b64)
-  kubeconfig_file = "${path.module}/.kube/${random_id.id.dec}.config"
+  kubeconfig_file = "${abspath(path.module)}/.kube/${random_id.id.dec}.config"
 }
 
 
