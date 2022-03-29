@@ -4,7 +4,7 @@ provider "aws" {
 
 resource "random_id" "id" {
   byte_length = 4
-  prefix      = "tf-argocd-"
+  prefix      = "tf-eks-"
 }
 
 # data "aws_region" "current" {}
