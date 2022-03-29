@@ -29,7 +29,7 @@ resource "kubectl_manifest" "argocd" {
 resource "null_resource" "argocd_app_cleanup" {
   depends_on = [kubectl_manifest.argocd]
   triggers = {
-    kubeconfig_b64   = var.kubeconfig_b64
+    kubeconfig_file  = local.kubeconfig_file
     argocd_namespace = var.argocd_namespace
   }
 
@@ -38,7 +38,7 @@ resource "null_resource" "argocd_app_cleanup" {
     command = <<SCRIPT
 until [ $( \
   kubectl get applications \
-    --kubeconfig <\(echo ${self.triggers.kubeconfig_b64} | base64 -d\) \
+    --kubeconfig ${self.triggers.kubeconfig_file} \
     -n ${self.triggers.argocd_namespace} \
     --no-headers \
   2>/dev/null \
