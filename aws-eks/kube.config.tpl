@@ -6,7 +6,6 @@ clusters:
   cluster:
     certificate-authority-data: ${cluster_ca_data}
     server: ${cluster_endpoint}
-  }
 contexts:
 - name: default
   context:
