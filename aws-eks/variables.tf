@@ -26,3 +26,10 @@ variable "eks_managed_node_group_configuration" {
     instance_types = ["m4.large"]
   }
 }
+
+# Set this to '{ AWS_PROFILE : "<aws SSO profile defined in ~/.aws/config>" }' for SSO logins
+variable "kubeconfig_aws_authenticator_env_variables" {
+  description = "Environment variables that should be used when executing the authenticator"
+  type        = map(string)
+  default     = {}
+}

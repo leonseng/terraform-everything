@@ -1,17 +1,38 @@
 apiVersion: v1
+preferences: {}
 kind: Config
-current-context: default
+
 clusters:
-- name: ${cluster_id}
-  cluster:
-    certificate-authority-data: ${cluster_ca_data}
-    server: ${cluster_endpoint}
+- cluster:
+    server: ${endpoint}
+    certificate-authority-data: ${cluster_auth_base64}
+  name: ${kubeconfig_name}
+
 contexts:
-- name: default
-  context:
-    cluster: ${cluster_id}
-    user: terraform
+- context:
+    cluster: ${kubeconfig_name}
+    user: ${kubeconfig_name}
+  name: ${kubeconfig_name}
+
+current-context: ${kubeconfig_name}
+
 users:
-- name: terraform
+- name: ${kubeconfig_name}
   user:
-    token: ${token}
+    exec:
+      apiVersion: client.authentication.k8s.io/v1alpha1
+      command: ${aws_authenticator_command}
+      args:
+%{~ for i in aws_authenticator_command_args }
+        - "${i}"
+%{~ endfor ~}
+%{ for i in aws_authenticator_additional_args }
+        - ${i}
+%{~ endfor ~}
+%{ if length(aws_authenticator_env_variables) > 0 }
+      env:
+  %{~ for k, v in aws_authenticator_env_variables ~}
+        - name: ${k}
+          value: ${v}
+  %{~ endfor ~}
+%{ endif }

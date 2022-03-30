@@ -53,12 +53,22 @@ locals {
 
 resource "local_file" "kubeconfig" {
   content = templatefile(
-    abspath("${path.module}/kube.config.tpl"),
-    {
-      cluster_id       = module.eks.cluster_id
-      cluster_ca_data  = module.eks.cluster_certificate_authority_data
-      cluster_endpoint = module.eks.cluster_endpoint
-      token            = data.aws_eks_cluster_auth.eks.token
+    "${path.module}/kube.config.tpl", {
+      kubeconfig_name     = random_id.id.dec
+      endpoint            = module.eks.cluster_endpoint
+      cluster_auth_base64 = module.eks.cluster_certificate_authority_data
+
+      # AWS Authenticator settings
+      #   aws_authenticator_command         = "aws-iam-authenticator"
+      #   aws_authenticator_command_args    = []
+      #   aws_authenticator_additional_args = []
+      #   aws_authenticator_env_variables   = []
+
+      ## SSO
+      aws_authenticator_command         = "aws"
+      aws_authenticator_command_args    = ["eks", "get-token", "--cluster-name", random_id.id.dec]
+      aws_authenticator_additional_args = []
+      aws_authenticator_env_variables   = var.kubeconfig_aws_authenticator_env_variables
     }
   )
   filename = local.kubeconfig_file
