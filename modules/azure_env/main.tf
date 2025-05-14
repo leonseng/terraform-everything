@@ -126,7 +126,7 @@ resource "azurerm_public_ip" "bastion" {
   name                = "${var.name}-bastion"
   resource_group_name = azurerm_resource_group.this.name
   location            = azurerm_resource_group.this.location
-  allocation_method   = "Dynamic"
+  allocation_method   = "Static"
 }
 
 resource "azurerm_network_interface" "bastion" {
